@@ -1,0 +1,118 @@
+//
+//  UploadTweetController.swift
+//  Twitter
+//
+//  Created by Alexis Horteales Espinosa on 18/12/25.
+//
+
+import UIKit
+
+class UploadTweetController: UIViewController{
+    
+    private let user: User
+    //MARK: Properties
+    private lazy var actionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = .twitterBlue // O .systemBlue
+        button.setTitle("Tweet", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 16
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.addTarget(self, action: #selector(handleUploadTweet), for: .touchUpInside)
+        return button
+    }()
+    
+    private let profileImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFit
+        iv.clipsToBounds = true
+        iv.setDimensions(width: 48, height: 48)
+        iv.layer.cornerRadius = 24
+        return iv
+    }()
+    
+    private let captionTextView = CaptionTextView()
+    
+    
+    //MARK:  Lifecycle
+    
+    init(user: User) {
+        self.user = user
+        super.init(nibName: nil, bundle: nil)
+      
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    override func viewDidLoad(){
+        super.viewDidLoad()
+        configureUI()
+        
+        print("debug: user is \(user.username)")
+    }
+  
+    
+    
+    //MARK: Selectors
+    @objc func handleCancel(){
+        dismiss(animated: true)
+    }
+    
+    @objc func handleUploadTweet(){
+        guard let caption = captionTextView.text else {return}
+        
+        TweetService.shared.uploadTweet(caption: caption) { error, ref in
+            if let error = error {
+                print("DEBUG: Failed to upload tweet with \(error.localizedDescription)")
+                return
+            }
+            
+            //dissapear vieew
+            self.dismiss(animated: true)
+        }
+    }
+    
+    
+    //MARK: API
+    
+
+    //MARK: Helpers
+    
+    func configureUI() {
+        view.backgroundColor = .systemBackground
+       configureNavigationBar()
+        
+        let stack = UIStackView(arrangedSubviews: [profileImageView, captionTextView])
+        stack.axis = .horizontal
+        stack.spacing = 12
+        
+        ///profile image
+        view.addSubview(stack)
+        stack.anchor(
+            top: view.safeAreaLayoutGuide.topAnchor,
+            left: view.leftAnchor,
+            right: view.rightAnchor,
+            paddingTop: 16,
+            paddingLeft: 16,
+            paddingRight: 16
+        )
+
+        
+        profileImageView.sd_setImage(with: user.profileImageUrl, completed: nil)
+        
+        
+        
+    }
+
+    
+    func configureNavigationBar(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(handleCancel))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: actionButton)
+    }
+}
+

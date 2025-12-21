@@ -1,0 +1,12 @@
+# Xcode
+DerivedData/
+*.xcuserstate
+*.xcuserdata/
+
+
+
+# Firebase (si NO quieres subirlo)
+GoogleService-Info.plist
+
+# macOS
+.DS_Store
