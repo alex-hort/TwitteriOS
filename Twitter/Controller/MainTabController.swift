@@ -20,7 +20,7 @@ class MainTabController: UITabBarController {
         }
     }
     
-    let actionButton: UIButton = {
+    lazy var actionButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .secondaryLabel
         button.backgroundColor = .systemBackground

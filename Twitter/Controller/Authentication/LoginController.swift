@@ -47,7 +47,7 @@ class LoginController: UIViewController {
         return tf
     }()
     
-    private let loginButton: UIButton = {
+    private lazy var loginButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Log In", for: .normal)
         button.setTitleColor(.systemBackground, for: .normal)
@@ -56,10 +56,11 @@ class LoginController: UIViewController {
         button.layer.cornerRadius = 5
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.addTarget(self, action: #selector(handleLogin), for: .touchUpInside)
+
         return button
     }()
     
-    private let dontHaveAccountButton: UIButton = {
+    private lazy var dontHaveAccountButton: UIButton = {
         let button = Utilities().attriutedButton("Don't have an account? ", "Sign Up")
         
         button.addTarget(self, action: #selector(handleShowSignUp), for: .touchUpInside)
@@ -93,7 +94,13 @@ class LoginController: UIViewController {
                 print("DEBUG: EError loggin in \(error.localizedDescription)")
                 return
             }
-            guard let window = UIApplication.shared.windows.first(where: {$0.isKeyWindow}) else {return}
+//            guard let window = UIApplication.shared.windows.first(where: {$0.isKeyWindow}) else {return}
+            guard let windowScene = UIApplication.shared.connectedScenes
+                    .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+                  let window = windowScene.windows.first(where: { $0.isKeyWindow }) else {
+                return
+            }
+
             guard let tab = window.rootViewController as? MainTabController else {return}
             //tab.authenticateUserAndConfigureUI()
             self.dismiss(animated: true, completion: nil)
