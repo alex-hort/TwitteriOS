@@ -35,20 +35,26 @@ struct ProfileHeaderViewModel{
     let usernameText: String
     
     var followerString: NSAttributedString? {
-        return attributedText(witValue: 1000, text: "Followers")
+        return attributedText(witValue: user.stats?.followers ?? 0, text: "Followers")
     }
     
     var followingString: NSAttributedString? {
-        return attributedText(witValue: 92, text: "Following")
+        return attributedText(witValue: user.stats?.following ?? 0, text: "Following")
     }
     var actionButtonTitle: String{
         if user.isCurrentUser{
             return "Edit Profile"
-        } else {
+        }
+        if !user.isFollowed && !user.isCurrentUser{
             return "Follow"
         }
+        if user.isFollowed{
+            return "Following"
+        }
+        return "Loading"
         
     }
+
     
     init(user: User){
         self.user = user
